@@ -1,0 +1,5 @@
+{
+  "name": "NextTrip",
+  "description": "An AI-powered travel planner that helps you create personalized itineraries, discover attractions, and manage bookings.",
+  "requestFramePermissions": []
+}
