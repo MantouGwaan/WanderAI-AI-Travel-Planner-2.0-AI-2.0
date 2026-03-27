@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore, DayPlan, ItineraryItem } from '../store';
 import { getItinerarySystemInstruction, getItineraryPrompt, getChatSystemInstruction } from '../constants/prompts';
 import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { MapPin, Clock, AlertTriangle, Send, RefreshCw, ChevronRight, CheckCircle2, GripVertical, Trash2, CalendarDays, Plus, Car, Footprints, Bus, Bike, FileText, Mail, X, Utensils, Hotel, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleGenAI, Type } from '@google/genai';
@@ -756,30 +759,49 @@ How would you like to refine your experience today? I can adjust the pace, swap 
                   : 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'
               }`}>
                 <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'prose-slate'}`}>
-                  <ReactMarkdown
-                    components={{
-                      h1: ({node, ...props}) => <h1 className="text-xl font-extrabold mb-3 text-emerald-900 border-b border-emerald-100 pb-1" {...props} />,
-                      h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 text-emerald-800" {...props} />,
-                      h3: ({node, ...props}) => (
-                        <div className="flex items-center gap-2 mb-3 mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100 shadow-sm">
-                          <Lightbulb className="w-5 h-5 text-emerald-600" />
-                          <h3 className="text-emerald-900 font-black text-sm uppercase tracking-widest m-0" {...props} />
-                        </div>
-                      ),
-                      p: ({node, ...props}) => <p className={`mb-3 last:mb-0 leading-relaxed ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-700'}`} {...props} />,
-                      ul: ({node, ...props}) => <ul className="list-none pl-0 space-y-2 mb-3" {...props} />,
-                      ol: ({node, ...props}) => <ol className={`list-decimal pl-5 space-y-2 mb-3 ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-700'}`} {...props} />,
-                      li: ({node, ...props}) => (
-                        <li className={`flex items-start gap-2 ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-600'}`}>
-                          {msg.role !== 'user' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />}
-                          <span {...props} />
-                        </li>
-                      ),
-                      strong: ({node, ...props}) => <strong className={`font-black ${msg.role === 'user' ? 'text-white underline underline-offset-2' : 'text-emerald-900 bg-emerald-50/50 px-1 rounded'}`} {...props} />,
-                    }}
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
+                  {msg.role === 'user' ? (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkBreaks, remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        h1: ({node, ...props}) => <h1 className="text-xl font-extrabold mb-3 text-emerald-900 border-b border-emerald-100 pb-1" {...props} />,
+                        h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 text-emerald-800" {...props} />,
+                        h3: ({node, ...props}) => <h3 className="text-[1.1rem] font-semibold my-[10px] text-[#064E3B]" {...props} />,
+                        p: ({node, ...props}) => <p className="mb-1 last:mb-0 leading-relaxed text-white font-bold" {...props} />,
+                        ul: ({node, ...props}) => <ul className="list-disc pl-5 my-[10px] space-y-1" {...props} />,
+                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-white font-bold" {...props} />,
+                        li: ({node, ...props}) => (
+                          <li className="text-white font-bold">
+                            <span {...props} />
+                          </li>
+                        ),
+                        strong: ({node, ...props}) => <strong className="font-black text-emerald-200" {...props} />,
+                      }}
+                    >
+                      {msg.text.replace(/\*\*\s+(.*?)\s+\*\*/g, '**$1**')}
+                    </ReactMarkdown>
+                  ) : (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkBreaks, remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        h1: ({node, ...props}) => <h1 className="text-xl font-black mb-3 text-emerald-900 border-b border-emerald-100 pb-1" {...props} />,
+                        h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 text-emerald-800" {...props} />,
+                        h3: ({node, ...props}) => <h3 className="text-[1.1rem] font-semibold my-[10px] text-[#064E3B]" {...props} />,
+                        p: ({node, ...props}) => <p className="mb-1 last:mb-0 leading-relaxed text-slate-700" {...props} />,
+                        ul: ({node, ...props}) => <ul className="list-disc pl-5 my-[10px] space-y-1" {...props} />,
+                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-slate-700" {...props} />,
+                        li: ({node, ...props}) => (
+                          <li className="text-slate-600">
+                            <span {...props} />
+                          </li>
+                        ),
+                        strong: ({node, ...props}) => <strong className="font-extrabold text-[#064E3B]" {...props} />,
+                      }}
+                    >
+                      {msg.text.replace(/\*\*\s+(.*?)\s+\*\*/g, '**$1**')}
+                    </ReactMarkdown>
+                  )}
                 </div>
               </div>
 
