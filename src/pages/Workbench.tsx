@@ -766,11 +766,11 @@ How would you like to refine your experience today? I can adjust the pace, swap 
                           <h3 className="text-emerald-900 font-black text-sm uppercase tracking-widest m-0" {...props} />
                         </div>
                       ),
-                      p: ({node, ...props}) => <p className="mb-3 last:mb-0 leading-relaxed text-slate-700" {...props} />,
+                      p: ({node, ...props}) => <p className={`mb-3 last:mb-0 leading-relaxed ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-700'}`} {...props} />,
                       ul: ({node, ...props}) => <ul className="list-none pl-0 space-y-2 mb-3" {...props} />,
-                      ol: ({node, ...props}) => <ol className="list-decimal pl-5 space-y-2 mb-3 text-slate-700" {...props} />,
+                      ol: ({node, ...props}) => <ol className={`list-decimal pl-5 space-y-2 mb-3 ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-700'}`} {...props} />,
                       li: ({node, ...props}) => (
-                        <li className={`flex items-start gap-2 ${msg.role === 'user' ? 'text-emerald-50' : 'text-slate-600'}`}>
+                        <li className={`flex items-start gap-2 ${msg.role === 'user' ? 'text-white font-bold' : 'text-slate-600'}`}>
                           {msg.role !== 'user' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />}
                           <span {...props} />
                         </li>
